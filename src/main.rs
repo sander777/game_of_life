@@ -10,7 +10,7 @@ mod world;
 
 use app::*;
 
-const SPACE_SIZE: [u32; 2] = [40, 20];
+const SPACE_SIZE: [u32; 2] = [40, 25];
 const SIZE: u32 = 30;
 const WINDOW_SIZE: [u32; 2] = [SPACE_SIZE[0] * SIZE, SPACE_SIZE[1] * SIZE];
 
@@ -19,6 +19,7 @@ fn main() {
     let mut window: GlutinWindow = WindowSettings::new("Pause", WINDOW_SIZE)
         .graphics_api(opengl)
         .exit_on_esc(true)
+        .resizable(false)
         .build()
         .unwrap();
     let mut app = App::new(opengl, SPACE_SIZE[0], SPACE_SIZE[1], SIZE);

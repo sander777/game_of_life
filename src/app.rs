@@ -27,7 +27,7 @@ impl App {
         App {
             gl: GlGraphics::new(opengl),
             dlt: 0.0,
-            upd_dlt: 0.3,
+            upd_dlt: 0.1,
             size,
             world: world::World::new(w as usize, h as usize),
             state: AppState::Pause
