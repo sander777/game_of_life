@@ -10,7 +10,7 @@ use crate::*;
 #[derive(Eq, PartialEq, Copy, Clone)]
 pub enum AppState {
     Pause,
-    Run
+    Run,
 }
 
 pub struct App {
@@ -23,15 +23,23 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(opengl: OpenGL, w: u32, h: u32, size: u32) -> App {
+    pub fn new(opengl: OpenGL, w: u32, h: u32) -> App {
         App {
             gl: GlGraphics::new(opengl),
             dlt: 0.0,
-            upd_dlt: 0.1,
-            size,
+            upd_dlt: 0.01,
+            size: 30,
             world: world::World::new(w as usize, h as usize),
-            state: AppState::Pause
+            state: AppState::Pause,
         }
+    }
+    pub fn set_upd_dlt(mut self: Self, dlt: f64) -> Self {
+        self.upd_dlt = dlt;
+        self
+    }
+    pub fn set_cell_size(mut self: Self, size: u32) -> Self {
+        self.size = size;
+        self
     }
 
     pub fn render(self: &mut Self, args: RenderArgs) {
@@ -50,7 +58,7 @@ impl App {
     pub fn update(self: &mut Self, args: UpdateArgs) {
         self.dlt += args.dt;
         if self.dlt >= self.upd_dlt {
-            if AppState::Run == self.state { 
+            if AppState::Run == self.state {
                 self.world.calculate_world();
                 self.world.process_world();
             }

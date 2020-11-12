@@ -1,8 +1,9 @@
+#![allow(dead_code)]
+
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
 extern crate piston;
-extern crate rand;
 
 mod app;
 mod cell;
@@ -22,7 +23,7 @@ fn main() {
         .resizable(false)
         .build()
         .unwrap();
-    let mut app = App::new(opengl, SPACE_SIZE[0], SPACE_SIZE[1], SIZE);
+    let mut app = App::new(opengl, SPACE_SIZE[0], SPACE_SIZE[1]).set_upd_dlt(0.1);
     let mut last_pos = [0.0, 0.0];
     let mut event = Events::new(EventSettings::new());
     while let Some(e) = event.next(&mut window) {
@@ -35,24 +36,23 @@ fn main() {
         if let Some(args) = e.update_args() {
             app.update(args);
         }
-        let press = match e.press_args() {
-            Some(it) => it,
-            _ => continue,
+        if let Some(press) = e.press_args() {
+            match press {
+                Button::Mouse(m) => match m {
+                    piston::MouseButton::Left => {
+                        app.change_cell(last_pos);
+                    }
+                    _ => {}
+                },
+                Button::Keyboard(key) => match key {
+                    Key::Space => app.start_or_stop(),
+                    Key::R => app.clear(),
+                    _ => {}
+                },
+                _ => {}
+            };
         };
-        match press {
-            Button::Mouse(m) => match m {
-                piston::MouseButton::Left => {
-                    app.change_cell(last_pos);
-                }
-                _ => {}
-            },
-            Button::Keyboard(key) => match key {
-                Key::Space => app.start_or_stop(),
-                Key::R => app.clear(),
-                _ => {}
-            }
-            _ => {}
-        }
+
         window.ctx.window().set_title(match app.state() {
             AppState::Pause => "Pause",
             AppState::Run => "Run",
